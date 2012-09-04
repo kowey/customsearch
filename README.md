@@ -2,13 +2,13 @@
 
 2. Download this package and install it
 
-       cd customsearch
-       cabal install
+        cd customsearch
+        cabal install
 
 
 3. Run it for further set up instructions
 
-       customsearch
+        customsearch
 
 
 4. When you have configured it, you should be able to perform simple
