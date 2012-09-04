@@ -1,6 +1,6 @@
 1. Install the [Haskell Platform](http://hackage.haskell.org/platform)
 
-2. Download this package and install it
+2. Download [this package](https://github.com/kowey/customsearch/zipball/master) and install it
 
         cd customsearch
         cabal install
