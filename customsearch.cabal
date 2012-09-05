@@ -21,10 +21,14 @@ executable customsearch
                ,       bytestring
                ,       aeson
                ,       aeson-pretty
+               ,       case-insensitive
+               ,       cmdargs
                ,       directory
                ,       filepath
                ,       ghc-prim
                ,       http-conduit
+               ,       http-types
                ,       text
                ,       url
                ,       vector
+  ghc-options: -Wall
