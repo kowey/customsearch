@@ -1,0 +1,456 @@
+{
+ "kind": "customsearch#search",
+ "url": {
+  "type": "application/json",
+  "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&cref={cref?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
+ },
+ "queries": {
+  "nextPage": [
+   {
+    "title": "Google Custom Search - guava",
+    "totalResults": "901000",
+    "searchTerms": "guava",
+    "count": 10,
+    "startIndex": 11,
+    "inputEncoding": "utf8",
+    "outputEncoding": "utf8",
+    "safe": "off",
+    "cx": "014631418509755419301:ktazqf1lvyu"
+   }
+  ],
+  "request": [
+   {
+    "title": "Google Custom Search - guava",
+    "totalResults": "901000",
+    "searchTerms": "guava",
+    "count": 10,
+    "startIndex": 1,
+    "inputEncoding": "utf8",
+    "outputEncoding": "utf8",
+    "safe": "off",
+    "cx": "014631418509755419301:ktazqf1lvyu"
+   }
+  ]
+ },
+ "context": {
+  "title": "kowey-test"
+ },
+ "searchInformation": {
+  "searchTime": 0.154977,
+  "formattedSearchTime": "0.15",
+  "totalResults": "901000",
+  "formattedTotalResults": "901,000"
+ },
+ "items": [
+  {
+   "kind": "customsearch#result",
+   "title": "Guava - Wikipedia, the free encyclopedia",
+   "htmlTitle": "\u003cb\u003eGuava\u003c/b\u003e - Wikipedia, the free encyclopedia",
+   "link": "http://en.wikipedia.org/wiki/Guava",
+   "displayLink": "en.wikipedia.org",
+   "snippet": "Guavas are plants in the Myrtle family (Myrtaceae) genus Psidium (meaning \"  pomegranate\" in Latin), which contains about 100 species of tropical shrubs and ...",
+   "htmlSnippet": "\u003cb\u003eGuavas\u003c/b\u003e are plants in the Myrtle family (Myrtaceae) genus Psidium (meaning &quot;\u003cbr\u003e  pomegranate&quot; in Latin), which contains about 100 species of tropical shrubs and \u003cb\u003e...\u003c/b\u003e",
+   "cacheId": "HB5LZ2qo8UIJ",
+   "formattedUrl": "en.wikipedia.org/wiki/Guava",
+   "htmlFormattedUrl": "en.wikipedia.org/wiki/\u003cb\u003eGuava\u003c/b\u003e",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Psidium_guajava_fruit2.jpg/240px-Psidium_guajava_fruit2.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "192",
+      "height": "144",
+      "src": "https://encrypted-tbn2.google.com/images?q=tbn:ANd9GcQ7qHs01gZQ4wW3cNuRVqFwF8bWoDuvrC2NWUGnRSsJwtlG1VZz5oX9FkRa"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "guava-libraries - Guava: Google Core Libraries for Java 1.6+ ...",
+   "htmlTitle": "\u003cb\u003eguava\u003c/b\u003e-libraries - \u003cb\u003eGuava\u003c/b\u003e: Google Core Libraries for Java 1.6+ \u003cb\u003e...\u003c/b\u003e",
+   "link": "http://code.google.com/p/guava-libraries/",
+   "displayLink": "code.google.com",
+   "snippet": "The Guava project contains several of Google's core libraries that we rely on in   our Java-based projects: collections, caching, primitives support, concurrency ...",
+   "htmlSnippet": "The \u003cb\u003eGuava\u003c/b\u003e project contains several of Google&#39;s core libraries that we rely on in \u003cbr\u003e  our Java-based projects: collections, caching, primitives support, concurrency \u003cb\u003e...\u003c/b\u003e",
+   "formattedUrl": "code.google.com/p/guava-libraries/",
+   "htmlFormattedUrl": "code.google.com/p/\u003cb\u003eguava\u003c/b\u003e-libraries/",
+   "pagemap": {
+    "creativework": [
+     {
+      "url": "http://code.google.com/p/guava-libraries",
+      "image": "http://www.gstatic.com/codesite/ph/images/search-48.gif",
+      "name": "guava-libraries",
+      "description": "Guava: Google Core Libraries for Java 1.6+"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "Guava",
+   "htmlTitle": "\u003cb\u003eGuava\u003c/b\u003e",
+   "link": "http://www.hort.purdue.edu/newcrop/morton/guava.html",
+   "displayLink": "www.hort.purdue.edu",
+   "snippet": "The guava has been cultivated and distributed by man, by birds, and sundry 4-  footed animals for so long that its place of origin is uncertain, but it is believed to ...",
+   "htmlSnippet": "The \u003cb\u003eguava\u003c/b\u003e has been cultivated and distributed by man, by birds, and sundry 4-\u003cbr\u003e  footed animals for so long that its place of origin is uncertain, but it is believed to \u003cb\u003e...\u003c/b\u003e",
+   "cacheId": "oQKNmb8pWoQJ",
+   "formattedUrl": "www.hort.purdue.edu/newcrop/morton/guava.html",
+   "htmlFormattedUrl": "www.hort.purdue.edu/newcrop/morton/\u003cb\u003eguava\u003c/b\u003e.html",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://www.hort.purdue.edu/newcrop/morton/images/Plate50.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "223",
+      "height": "226",
+      "src": "https://encrypted-tbn3.google.com/images?q=tbn:ANd9GcQG2QtaQYJYym7bBwj-UtjoeVj1_L7hsnZfzzbGccpQSxshWSHMWf2cYusl"
+     }
+    ],
+    "metatags": [
+     {
+      "formatter": "Arachnophilia 3.9"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "Guava - Search Engine Optimisation, Search Engine Marketing ...",
+   "htmlTitle": "\u003cb\u003eGuava\u003c/b\u003e - Search Engine Optimisation, Search Engine Marketing \u003cb\u003e...\u003c/b\u003e",
+   "link": "http://www.guava.com/",
+   "displayLink": "www.guava.com",
+   "snippet": "Fresh thinking, highly energetic marketing agency offering -Search Engine   Marketing - Search Engine Optimisation - Web Design Services Worldwide.",
+   "htmlSnippet": "Fresh thinking, highly energetic marketing agency offering -Search Engine \u003cbr\u003e  Marketing - Search Engine Optimisation - Web Design Services Worldwide.",
+   "cacheId": "MiimaxBdy2cJ",
+   "formattedUrl": "www.guava.com/",
+   "htmlFormattedUrl": "www.\u003cb\u003eguava\u003c/b\u003e.com/",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://www.guava.com/images/guava_logo.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "119",
+      "height": "60",
+      "src": "https://encrypted-tbn1.google.com/images?q=tbn:ANd9GcQBVk7OSU9iKt2EyoJjOsdiEW-o_wFC7G440wKPrjaJQvE1NUkNJjBa"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "TROPICAL GUAVA Fruit Facts",
+   "htmlTitle": "TROPICAL \u003cb\u003eGUAVA\u003c/b\u003e Fruit Facts",
+   "link": "http://www.crfg.org/pubs/ff/guava.html",
+   "displayLink": "www.crfg.org",
+   "snippet": "Related species: Brazilian guava, Guisaro (Psidium guinense Sw.), Cattley   Guava, Strawberry Guava (P. cattleianum Sabine), Costa Rican Guava (P.",
+   "htmlSnippet": "Related species: Brazilian \u003cb\u003eguava\u003c/b\u003e, Guisaro (Psidium guinense Sw.), Cattley \u003cbr\u003e  \u003cb\u003eGuava\u003c/b\u003e, Strawberry \u003cb\u003eGuava\u003c/b\u003e (P. cattleianum Sabine), Costa Rican \u003cb\u003eGuava\u003c/b\u003e (P.",
+   "cacheId": "gzyTfRi-pvMJ",
+   "formattedUrl": "www.crfg.org/pubs/ff/guava.html",
+   "htmlFormattedUrl": "www.crfg.org/pubs/ff/\u003cb\u003eguava\u003c/b\u003e.html"
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "How to...Eat Guava - YouTube",
+   "htmlTitle": "How to...Eat \u003cb\u003eGuava\u003c/b\u003e - YouTube",
+   "link": "http://www.youtube.com/watch?v=QSJSSs9CeSQ",
+   "displayLink": "www.youtube.com",
+   "snippet": "Nov 9, 2010 ... Very simple, but very tasty, guava is easy to eat and full of healthy stuff. A super   food, guava has four times the vitamin C of one orange.",
+   "htmlSnippet": "Nov 9, 2010 \u003cb\u003e...\u003c/b\u003e Very simple, but very tasty, \u003cb\u003eguava\u003c/b\u003e is easy to eat and full of healthy stuff. A super \u003cbr\u003e  food, \u003cb\u003eguava\u003c/b\u003e has four times the vitamin C of one orange.",
+   "cacheId": "JZXivgailX0J",
+   "formattedUrl": "www.youtube.com/watch?v=QSJSSs9CeSQ",
+   "htmlFormattedUrl": "www.youtube.com/watch?v=QSJSSs9CeSQ",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://i2.ytimg.com/vi/QSJSSs9CeSQ/mqdefault.jpg"
+     }
+    ],
+    "videoobject": [
+     {
+      "url": "http://www.youtube.com/watch?v=QSJSSs9CeSQ",
+      "name": "How to...Eat Guava",
+      "description": "Very simple, but very tasty, guava is easy to eat and full of healthy stuff. A super food, guava has four times the vitamin C of one orange. http://livelife3...",
+      "duration": "PT2M31S",
+      "unlisted": "False",
+      "paid": "False",
+      "thumbnailurl": "http://i2.ytimg.com/vi/QSJSSs9CeSQ/hqdefault.jpg",
+      "embedurl": "http://www.youtube.com/v/QSJSSs9CeSQ?version=3&autohide=1",
+      "playertype": "Flash",
+      "width": "640",
+      "height": "480",
+      "isfamilyfriendly": "False"
+     }
+    ],
+    "person": [
+     {
+      "url": "http://www.youtube.com/user/livelife365"
+     }
+    ],
+    "metatags": [
+     {
+      "title": "How to...Eat Guava",
+      "og:url": "http://www.youtube.com/watch?v=QSJSSs9CeSQ",
+      "og:title": "How to...Eat Guava",
+      "og:description": "Very simple, but very tasty, guava is easy to eat and full of healthy stuff. A super food, guava has four times the vitamin C of one orange. http://livelife3...",
+      "og:type": "video",
+      "og:image": "http://i2.ytimg.com/vi/QSJSSs9CeSQ/mqdefault.jpg",
+      "og:video": "http://www.youtube.com/v/QSJSSs9CeSQ?version=3&autohide=1",
+      "og:video:type": "application/x-shockwave-flash",
+      "og:video:width": "640",
+      "og:video:height": "480",
+      "og:site_name": "YouTube",
+      "fb:app_id": "87741124305",
+      "twitter:player:width": "640",
+      "twitter:player:height": "480",
+      "og:restrictions:age": "18+",
+      "attribution": "livelife365%2Buser/"
+     }
+    ],
+    "imageobject": [
+     {
+      "url": "http://i2.ytimg.com/vi/QSJSSs9CeSQ/mqdefault.jpg",
+      "width": "320",
+      "height": "180"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "HS4/MG045: Guava Growing in the Florida Home Landscape",
+   "htmlTitle": "HS4/MG045: \u003cb\u003eGuava\u003c/b\u003e Growing in the Florida Home Landscape",
+   "link": "http://edis.ifas.ufl.edu/mg045",
+   "displayLink": "edis.ifas.ufl.edu",
+   "snippet": "Common names: guava, guajava, guayaba, jambu biji (Malay), bayabas (  Philippino), trapaek sruk (Cambodian), farang, ma-kuai and ma-man (Thai) and   oi ...",
+   "htmlSnippet": "Common names: \u003cb\u003eguava\u003c/b\u003e, guajava, guayaba, jambu biji (Malay), bayabas (\u003cbr\u003e  Philippino), trapaek sruk (Cambodian), farang, ma-kuai and ma-man (Thai) and \u003cbr\u003e  oi \u003cb\u003e...\u003c/b\u003e",
+   "cacheId": "uQBvt0EfRdUJ",
+   "formattedUrl": "edis.ifas.ufl.edu/mg045",
+   "htmlFormattedUrl": "edis.ifas.ufl.edu/mg045",
+   "pagemap": {
+    "metatags": [
+     {
+      "dcterms.title": "Guava Growing in the Florida Home Landscape",
+      "ipn": "HS4",
+      "dcterms.creator": "Jonathan H. Crane and Carlos F. Balerdi",
+      "author": "Jonathan H. Crane and Carlos F. Balerdi",
+      "dc.publisher": "Horticultural Sciences",
+      "department": "Horticultural Sciences",
+      "dc.date": "2009-11-05",
+      "dcterms-revised": "2005-10-31",
+      "dcterms-reviewed": "2009-11-01",
+      "dcterms-modified": "2009-11-05",
+      "dc-type": "Text",
+      "dc-format": "text/html",
+      "dc-identifier": "MG045",
+      "dc-language": "English",
+      "language": "English"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "Guava Beach Bar Grill – Mission Beach, CA Best Hangout for Food ...",
+   "htmlTitle": "\u003cb\u003eGuava\u003c/b\u003e Beach Bar Grill – Mission Beach, CA Best Hangout for Food \u003cb\u003e...\u003c/b\u003e",
+   "link": "http://www.guava-beach.com/",
+   "displayLink": "www.guava-beach.com",
+   "snippet": "Seafood and Mexican specialties in Mission Beach. Includes menus, drink and   happy hour specials, and hours.",
+   "htmlSnippet": "Seafood and Mexican specialties in Mission Beach. Includes menus, drink and \u003cbr\u003e  happy hour specials, and hours.",
+   "cacheId": "35G7uXBTbnUJ",
+   "formattedUrl": "www.guava-beach.com/",
+   "htmlFormattedUrl": "www.\u003cb\u003eguava\u003c/b\u003e-beach.com/",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://0.static.wix.com/media/395de1ce1a60dbdee621e4f6f76e256e.wix_mp_1024"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "259",
+      "height": "194",
+      "src": "https://encrypted-tbn3.google.com/images?q=tbn:ANd9GcSSsfwKSi_cdCNmfwbgCJEK9DgwmJGL9y-3E-LNrOOE8Ul3-dl8XENYej4"
+     }
+    ],
+    "metatags": [
+     {
+      "fragment": "!",
+      "og:type": "article",
+      "og:title": "Guava Beach Bar Grill – Mission Beach, CA Best Hangout for Food, Drinks and Fun",
+      "og:url": "http://www.guava-beach.com",
+      "og:description": "Grill&Bar, , , Home, , EAT, THE, MEAT, Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce tempor arcu ac urna. Fusce congue eleifend mi. Pellentesque metus sem, elementum eu, rhoncus sed, gravida sit amet, nulla. Lorem ipsum dolor",
+      "og:site_name": "Guava Beach Bar Grill – Mission Beach, CA Best Hangout for Food, Drinks and Fun",
+      "og:image": "http://0.static.wix.com/dicons/2e1565_6cec3b2341d15cdc4d6b7d48386d5c2c.wix_doc_ico",
+      "title": "Guava Beach Bar Grill – Mission Beach, CA Best Hangout for Food, Drinks and Fun"
+     }
+    ],
+    "imageobject": [
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/782aa8015bfb49c5a83c0aa2af406f8d.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/782aa8015bfb49c5a83c0aa2af406f8d.wix_mp_1024"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/25813c9ad4b88e89c0bec9732560d4da.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/25813c9ad4b88e89c0bec9732560d4da.wix_mp_1024"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/3c9ae504739378661da89b92ea61997b.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/3c9ae504739378661da89b92ea61997b.wix_mp_1024"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/4ad9e554c8f9b58f2e829e8dece29f0d.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/4ad9e554c8f9b58f2e829e8dece29f0d.wix_mp_512"
+     },
+     {
+      "contenturl": "http://0.static.wix.com/media/1161cd7f17c4a367d3b6b1a441e240f8.wix_mp_1024",
+      "name": "We know tequila....",
+      "description": "A vast selection of tequilas for every aficionado ..."
+     },
+     {
+      "contenturl": "http://0.static.wix.com/media/395de1ce1a60dbdee621e4f6f76e256e.wix_mp_1024",
+      "name": "Pub Crawls At Guava ! ! !",
+      "description": "We are the perfect stop for your next pub crawl."
+     },
+     {
+      "contenturl": "http://0.static.wix.com/media/918c56e5721697fd2108dd28a5961d4c.wix_mp_1024",
+      "name": "Got Margaritas",
+      "description": "Tasty!"
+     },
+     {
+      "contenturl": "http://0.static.wix.com/media/20df827e31ee61a4e4af35450b844704.wix_mp_1024",
+      "name": "Sports Are on At Guava",
+      "description": "Whether you grab a spot at the bar, at a table or booth, reserve the VIP room, kick it in our elevated pool table lounge, or sit front and center on the plush leather couch by the fireplace-..."
+     },
+     {
+      "contenturl": "http://0.static.wix.com/media/2e1565_f8778e3a45ad6d9c25eb2d2f57f5c114.jpg_1024",
+      "name": "Courtney Brad Guest 2.jpg",
+      "description": "Guest Bartending EveryMonday Starting At 9pm"
+     },
+     {
+      "contenturl": "http://0.static.wix.com/media/2e1565_a3919897f15bbad6700e75ae7dba1710.jpg_1024",
+      "name": "Victor Le Douche Jammie Jam"
+     },
+     {
+      "contenturl": "http://0.static.wix.com/media/2e1565_2691398c3e628c7786c56506763ae2e8.jpg_1024",
+      "name": "Mission Beach Fashion Show",
+      "description": "Sunday, May 15th Party starts 6pm Show begins 7pm"
+     },
+     {
+      "contenturl": "http://0.static.wix.com/media/2e1565_d5b472c47208a08cc2c47dcdb1e0c8e4.jpg_1024",
+      "name": "Honkey Tonk Shindig June 2nd"
+     },
+     {
+      "contenturl": "http://0.static.wix.com/media/2e1565_7128db59bbe47bdf02284d530ca74a1c.jpg_1024",
+      "name": "Western Party 2012"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/421a6547c021174fe6bef541f0fdbda4.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/421a6547c021174fe6bef541f0fdbda4.wix_mp_256"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/90bf837c783bdd68cd3470604145644f.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/90bf837c783bdd68cd3470604145644f.wix_mp_256"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/f44f90e0a481ee931edc3016cb9e8790.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/f44f90e0a481ee931edc3016cb9e8790.wix_mp_256"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/7794052de2a90c9a4f2fe76af83ba2b2.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/7794052de2a90c9a4f2fe76af83ba2b2.wix_mp_256"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/e9b088ca1954be432d0f402e7a055c1d.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/e9b088ca1954be432d0f402e7a055c1d.wix_mp_256"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/5fc4c7fb8c651d4650ca96ac1ed5e8ed.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/5fc4c7fb8c651d4650ca96ac1ed5e8ed.wix_mp_256"
+     },
+     {
+      "thumbnailurl": "http://0.static.wix.com/media/eea2a07daff234b7d76d95775d686ba1.wix_mp_128",
+      "contenturl": "http://0.static.wix.com/media/eea2a07daff234b7d76d95775d686ba1.wix_mp_256"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "Digital Marketing Agency | NetBooster UK | Search Engine ...",
+   "htmlTitle": "Digital Marketing Agency | NetBooster UK | Search Engine \u003cb\u003e...\u003c/b\u003e",
+   "link": "http://www.netbooster.co.uk/",
+   "displayLink": "www.netbooster.co.uk",
+   "snippet": "NetBooster Group · NetBooster A/S (formerly Guava) · Newsletter · Contact Us ·   Group Agencies · Guava|NetBooster Denmark · NetBooster Sweden · NetBooster ...",
+   "htmlSnippet": "NetBooster Group &middot; NetBooster A/S (formerly \u003cb\u003eGuava\u003c/b\u003e) &middot; Newsletter &middot; Contact Us &middot; \u003cbr\u003e  Group Agencies &middot; \u003cb\u003eGuava\u003c/b\u003e|NetBooster Denmark &middot; NetBooster Sweden &middot; NetBooster \u003cb\u003e...\u003c/b\u003e",
+   "cacheId": "miZ5c4KOFOYJ",
+   "formattedUrl": "www.netbooster.co.uk/",
+   "htmlFormattedUrl": "www.netbooster.co.uk/",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://netbooster.co.uk/sites/default/files/award_winner.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "184",
+      "height": "80",
+      "src": "https://encrypted-tbn0.google.com/images?q=tbn:ANd9GcQjzjegibyORKY5O4DCFT3H33r1KWiD4aDsfmz4HbRb96GxcypFohRVyck"
+     }
+    ],
+    "metatags": [
+     {
+      "dc:title": "NetBooster UK - Native to Digital",
+      "sioc:num_replies": "0",
+      "og:site_name": "Netbooster UK",
+      "og:url": "http://www.netbooster.co.uk/home",
+      "og:type": "article",
+      "og:title": "NetBooster UK - Native to Digital"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "Guava International",
+   "htmlTitle": "\u003cb\u003eGuava\u003c/b\u003e International",
+   "link": "http://www.guavauk.com/",
+   "displayLink": "www.guavauk.com",
+   "snippet": "Guava international is a division of RMA Group and represents Jaguar and Land   Rover across the globe. We have three core areas of responsibilities. Firstly we ...",
+   "htmlSnippet": "\u003cb\u003eGuava\u003c/b\u003e international is a division of RMA Group and represents Jaguar and Land \u003cbr\u003e  Rover across the globe. We have three core areas of responsibilities. Firstly we \u003cb\u003e...\u003c/b\u003e",
+   "cacheId": "393mfkTMIrUJ",
+   "formattedUrl": "www.guavauk.com/",
+   "htmlFormattedUrl": "www.\u003cb\u003eguava\u003c/b\u003euk.com/",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://www.guavauk.com/wp-content/uploads/hero-image-home.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "383",
+      "height": "131",
+      "src": "https://encrypted-tbn0.google.com/images?q=tbn:ANd9GcSxjqpJzvsTHHr5D-d47wEs4-UA30frMMwElrjDcdfTT-_h4zh35qBGDti7"
+     }
+    ],
+    "metatags": [
+     {
+      "author": "Guava International",
+      "viewport": "width=device-width; initial-scale=1.0; maximum-scale=1.0;"
+     }
+    ]
+   }
+  }
+ ]
+}
