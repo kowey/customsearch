@@ -30,7 +30,8 @@ customsearch p = modes
         , start  = 1  &= typ "INT" &= help "Starting from which result"
         , query  = []  &= args
         , dump     = False            &= help "Save machine readable results"
-        , fromDump = "" &= typ "FILE" &= help "[DEBUG ONLY] Don't talk to Google. Read and print machine readable from file"
+        , fromDump = "" &= typ "FILE"
+                        &= help "[DEBUG ONLY] Don't talk to Google. Read and print machine readable results from file"
         }
     ] &= program (takeFileName p)
       &= help (p ++ " " ++ showVersion version)
