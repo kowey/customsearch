@@ -8,6 +8,7 @@ import Control.Applicative
 import Control.Monad
 import GHC.Generics ( Generic )
 import qualified Data.Text   as T
+import qualified Data.Text.Read as T
 
 import Data.Aeson
 import Network.URL
@@ -60,8 +61,12 @@ instance FromJSON GResults where
         GResults <$> v .: "items"
                  <*> (parseSI =<< (v .: "searchInformation"))
       where
-        parseSI (Object sv) = return 42 -- sv .: "totalResults"
-        parseSI _ = return 43 --mzero
+        parseSI (Object sv) = do
+            tr <- sv .: "totalResults" -- sigh, not actually a number
+            case T.decimal tr of
+                Right (n,"") -> return n
+                _            -> mzero
+        parseSI _ = mzero
     parseJSON _ = mzero
 
 -- | A single hit in the search
