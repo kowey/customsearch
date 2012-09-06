@@ -26,10 +26,13 @@ import Network.URL
 import System.Console.CmdArgs
 import qualified Data.Vector as V
 
-import Network.Google.CustomSearch
-import qualified Network.Google.Billing as GB
+-- import Network.Google.CustomSearch
+import Network.Bing
+import qualified Network.Bing as Bing
+import qualified Network.SearchEngine   as SE
 import qualified Local.Config  as Cfg
 import qualified Local.Message as Msg
+import qualified Network.Bing  as Msg -- TODO generalise
 import Local.Proxy
 
 main :: IO ()
@@ -41,43 +44,44 @@ main = do
 
 doSearches :: Cfg.CustomSearch -> IO ()
 doSearches config = do
-    searchCfg  <- readSearchConfigFile
+    searchCfg  <- readSearchConfigFile engine
     when (null query) $ die Msg.emptyQuery
     mproxy <- fetchHttpConduitProxy
     -- first batch of results
     res <- doSearch searchCfg mproxy dump query start
     -- handle more results
-    when (num > step && totalResults res > step) $
-        if allowBilling searchCfg
+    when (num > step) $ -- TODO && totalResults res > step) $
+        if Bing.allowBilling searchCfg
            then do
                { let starts = drop 1 [ start, start + step .. start + num ]
                ; mapM_ (doSearch searchCfg mproxy dump query) starts
                }
            else do
-               { cfile <- searchCfgFilePath
+               { cfile <- searchCfgFilePath Bing
                ; die (Msg.dareNotExceedQuota cfile (Cfg.num config))
                }
   where
+    engine = Bing
     query = unwords (Cfg.query config)
     num   = Cfg.num config
     start = Cfg.start config
     dump  = Cfg.dump config
-    step = GB.maxResultsPerCustomSearch
+    step = SE.maxResultsPerSearch engine
 
 doFromDump :: Cfg.CustomSearch -> IO ()
 doFromDump config = do
     rawRes <- BL.readFile (Cfg.fromDump config)
     res    <- readResults query rawRes
-    printResults res
-    hPutStrLn stderr $ show (totalResults res) ++ " total results"
+    printResults (res :: Bing.Results)
+    -- hPutStrLn stderr $ show (totalResults res) ++ " total results"
  where
     query = unwords (Cfg.query config)
 
 -- | Perform a search, print results, dump as needed
-doSearch :: SearchConfig -> Maybe Proxy -> Bool -> String -> Int -> IO GResults
+doSearch :: Bing.SearchConfig -> Maybe Proxy -> Bool -> String -> Int -> IO Bing.Results
 doSearch searchCfg mproxy dump query start = do
     hPutStrLn stderr $ "Search starting from " ++ show start
-    rawRes <- google searchCfg mproxy start query
+    rawRes <- connect searchCfg mproxy start query
     res    <- readResults query rawRes
     printResults res
     when dump $ do
@@ -85,18 +89,23 @@ doSearch searchCfg mproxy dump query start = do
          T.hPutStrLn stderr $ Msg.dumped rfile
     return res
 
-google :: SearchConfig -> Maybe Proxy -> Int -> String -> IO BL.ByteString
-google searchCfg mproxy start theQuery = flip catch reportException $ do
-    request_ <- parseUrl . exportURL $ mkUrl searchCfg start theQuery
-    let request = request_ { proxy = mproxy }
+connect :: SearchConfig -> Maybe Proxy -> Int -> String -> IO BL.ByteString
+connect searchCfg mproxy start theQuery = flip catch reportException $ do
+    request_ <- parseUrl . exportURL $ url
+    let request = request_
+            { proxy          = mproxy
+            , requestHeaders = requestHeaders request_ ++ headers
+            }
     withManager $ \mgr -> responseBody <$> httpLbs request mgr
   where
     reportException e = die (Msg.gotHttpException e)
+    (url, headers) = mkRequest searchCfg start theQuery
 
 -- | Read results, complaining if something goes wrong
-readResults :: String        -- ^ query
+readResults :: FromJSON r
+            => String        -- ^ query
             -> BL.ByteString -- ^ result
-            -> IO GResults
+            -> IO r
 readResults query searchRes =
     case decode searchRes of
         Nothing -> do
@@ -105,8 +114,8 @@ readResults query searchRes =
             }
         Just j -> return j
 
-printResults :: GResults -> IO ()
-printResults = V.mapM_ (T.putStrLn . displayResult) . items
+printResults :: SE.Results r => r -> IO ()
+printResults = V.mapM_ (T.putStrLn . displayResult) . SE.items
 
 -- | Returns file name for dumped results
 dumpSearchResults :: String -> String -> BL.ByteString -> IO FilePath
@@ -120,14 +129,15 @@ dumpSearchResults query suffix res = do
                      . map (filter isAlpha)
                      . words
 
-searchCfgFilePath :: IO FilePath
-searchCfgFilePath = do
+searchCfgFilePath :: SE.SearchEngine e => e -> IO FilePath
+searchCfgFilePath engine = do
     appdir <- getAppUserDataDirectory "customsearch"
-    return $ appdir </> "config" <.> "json"
+    return $ appdir </> SE.shortName engine <.> "json"
 
-readSearchConfigFile :: IO SearchConfig
-readSearchConfigFile = do
-    cfile  <- searchCfgFilePath
+-- TODO generalise
+readSearchConfigFile :: SE.SearchEngine e => e -> IO Bing.SearchConfig
+readSearchConfigFile engine = do
+    cfile  <- searchCfgFilePath engine
     exists <- doesFileExist cfile
     if exists
        then do
@@ -137,11 +147,11 @@ readSearchConfigFile = do
            createDirectoryIfMissing False (takeDirectory cfile)
            die (Msg.searchConfigFileNotFound cfile)
 
-displayResult :: GResult -> T.Text
+displayResult :: SE.Result -> T.Text
 displayResult gr =
-    resUrl gr <> "\t" <> niceSnippet gr
+    SE.url gr <> "\t" <> niceSnippet gr
   where
-    niceSnippet = T.unwords . T.words . resSnippet
+    niceSnippet = T.unwords . T.words . SE.snippet
 
 -- ---------------------------------------------------------------------
 -- odds and ends

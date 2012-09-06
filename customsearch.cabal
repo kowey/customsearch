@@ -18,6 +18,7 @@ executable customsearch
   main-is:             customsearch.hs
   -- other-modules:       
   build-depends:       base ==4.5.*
+               ,       base64-bytestring
                ,       bytestring
                ,       aeson
                ,       aeson-pretty
