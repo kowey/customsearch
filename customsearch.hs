@@ -33,11 +33,14 @@ import qualified Local.Message as Msg
 
 main :: IO ()
 main = do
-    config     <- cmdArgs =<< (Cfg.customsearch <$> getProgName)
+    config <- cmdArgs =<< (Cfg.customsearch <$> getProgName)
+    if null (Cfg.fromDump config)
+       then doSearches config
+       else doFromDump config
+
+doSearches :: Cfg.CustomSearch -> IO ()
+doSearches config = do
     searchCfg  <- readSearchConfigFile
-    let query = unwords (Cfg.query config)
-        num   = Cfg.num config
-        dump  = Cfg.dump config
     when (null query) $ die Msg.emptyQuery
     -- first batch of results
     res <- doSearch searchCfg dump query 1
@@ -53,14 +56,25 @@ main = do
                ; die (Msg.dareNotExceedQuota cfile (Cfg.num config))
                }
   where
+    query = unwords (Cfg.query config)
+    num   = Cfg.num config
+    dump  = Cfg.dump config
     step = GB.maxResultsPerCustomSearch
 
--- | Perfoarm a search, print results, dump as needed
+doFromDump :: Cfg.CustomSearch -> IO ()
+doFromDump config = do
+    rawRes <- BL.readFile (Cfg.fromDump config)
+    res    <- readResults query rawRes
+    printResults res
+    hPutStrLn stderr $ show (totalResults res) ++ " total results"
+ where
+    query = unwords (Cfg.query config)
+
+-- | Perform a search, print results, dump as needed
 doSearch :: SearchConfig -> Bool -> String -> Int -> IO GResults
 doSearch searchCfg dump query start = do
     hPutStrLn stderr $ "Search number " ++ show start
     rawRes <- google searchCfg start query
-    -- rawRes <- BL.readFile query
     res    <- readResults query rawRes
     printResults res
     when dump $ do
