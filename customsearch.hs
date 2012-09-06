@@ -45,12 +45,12 @@ doSearches config = do
     when (null query) $ die Msg.emptyQuery
     mproxy <- fetchHttpConduitProxy
     -- first batch of results
-    res <- doSearch searchCfg mproxy dump query 1
+    res <- doSearch searchCfg mproxy dump query start
     -- handle more results
     when (num > step && totalResults res > step) $
         if allowBilling searchCfg
            then do
-               { let starts = drop 1 [ 1, 1 + step .. num ]
+               { let starts = drop 1 [ start, start + step .. start + num ]
                ; mapM_ (doSearch searchCfg mproxy dump query) starts
                }
            else do
@@ -60,6 +60,7 @@ doSearches config = do
   where
     query = unwords (Cfg.query config)
     num   = Cfg.num config
+    start = Cfg.start config
     dump  = Cfg.dump config
     step = GB.maxResultsPerCustomSearch
 
@@ -75,7 +76,7 @@ doFromDump config = do
 -- | Perform a search, print results, dump as needed
 doSearch :: SearchConfig -> Maybe Proxy -> Bool -> String -> Int -> IO GResults
 doSearch searchCfg mproxy dump query start = do
-    hPutStrLn stderr $ "Search number " ++ show start
+    hPutStrLn stderr $ "Search starting from " ++ show start
     rawRes <- google searchCfg mproxy start query
     res    <- readResults query rawRes
     printResults res
