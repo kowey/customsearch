@@ -26,6 +26,7 @@ executable customsearch
                ,       directory
                ,       filepath
                ,       ghc-prim
+               ,       HTTP
                ,       http-conduit
                ,       http-types
                ,       text

@@ -30,6 +30,7 @@ import Network.Google.CustomSearch
 import qualified Network.Google.Billing as GB
 import qualified Local.Config  as Cfg
 import qualified Local.Message as Msg
+import Local.Proxy
 
 main :: IO ()
 main = do
@@ -42,14 +43,15 @@ doSearches :: Cfg.CustomSearch -> IO ()
 doSearches config = do
     searchCfg  <- readSearchConfigFile
     when (null query) $ die Msg.emptyQuery
+    mproxy <- fetchHttpConduitProxy
     -- first batch of results
-    res <- doSearch searchCfg dump query 1
+    res <- doSearch searchCfg mproxy dump query 1
     -- handle more results
     when (num > step && totalResults res > step) $
         if allowBilling searchCfg
            then do
                { let starts = drop 1 [ 1, 1 + step .. num ]
-               ; mapM_ (doSearch searchCfg dump query) starts
+               ; mapM_ (doSearch searchCfg mproxy dump query) starts
                }
            else do
                { cfile <- searchCfgFilePath
@@ -71,10 +73,10 @@ doFromDump config = do
     query = unwords (Cfg.query config)
 
 -- | Perform a search, print results, dump as needed
-doSearch :: SearchConfig -> Bool -> String -> Int -> IO GResults
-doSearch searchCfg dump query start = do
+doSearch :: SearchConfig -> Maybe Proxy -> Bool -> String -> Int -> IO GResults
+doSearch searchCfg mproxy dump query start = do
     hPutStrLn stderr $ "Search number " ++ show start
-    rawRes <- google searchCfg start query
+    rawRes <- google searchCfg mproxy start query
     res    <- readResults query rawRes
     printResults res
     when dump $ do
@@ -82,9 +84,11 @@ doSearch searchCfg dump query start = do
          T.hPutStrLn stderr $ Msg.dumped rfile
     return res
 
-google :: SearchConfig -> Int -> String -> IO BL.ByteString
-google searchCfg start theQuery = flip catch reportException $
-    simpleHttp . exportURL $ mkUrl searchCfg start theQuery
+google :: SearchConfig -> Maybe Proxy -> Int -> String -> IO BL.ByteString
+google searchCfg mproxy start theQuery = flip catch reportException $ do
+    request_ <- parseUrl . exportURL $ mkUrl searchCfg start theQuery
+    let request = request_ { proxy = mproxy }
+    withManager $ \mgr -> responseBody <$> httpLbs request mgr
   where
     reportException e = die (Msg.gotHttpException e)
 
