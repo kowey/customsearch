@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric, TypeFamilies, FlexibleInstances #-}
 
 -- | Bing web search
 module Network.Bing where
@@ -27,8 +27,11 @@ import qualified Data.Text.Lazy.Encoding as TL
 data Bing = Bing
 
 instance SE.SearchEngine Bing where
+    data Config Bing = Config SearchConfig
     maxResultsPerSearch _ = 50
     shortName           _ = "bing"
+    mkRequest (Config c)        = mkRequest c
+    allowMultiSearch (Config c) = allowBilling c
 
 -- | Application-specific configuration for this search engine
 data SearchConfig = SearchConfig
@@ -36,6 +39,9 @@ data SearchConfig = SearchConfig
     , allowBilling :: Bool
     }
   deriving (Generic)
+
+instance FromJSON (SE.Config Bing) where
+   parseJSON j = Config <$> parseJSON j
 
 instance FromJSON SearchConfig
 instance ToJSON   SearchConfig

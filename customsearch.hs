@@ -1,5 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving, DeriveDataTypeable #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE TypeFamilies, FlexibleContexts #-}
 
 module Main where
 
@@ -48,13 +50,14 @@ doSearches config = do
     when (null query) $ die Msg.emptyQuery
     mproxy <- fetchHttpConduitProxy
     -- first batch of results
-    res <- doSearch searchCfg mproxy dump query start
+    let mkSearch = Search Bing searchCfg mproxy query
+    res <- doSearch dump (mkSearch start)
     -- handle more results
     when (num > step) $ -- TODO && totalResults res > step) $
-        if Bing.allowBilling searchCfg
+        if SE.allowMultiSearch searchCfg
            then do
                { let starts = drop 1 [ start, start + step .. start + num ]
-               ; mapM_ (doSearch searchCfg mproxy dump query) starts
+               ; mapM_ (doSearch dump . mkSearch) starts
                }
            else do
                { cfile <- searchCfgFilePath Bing
@@ -77,29 +80,42 @@ doFromDump config = do
  where
     query = unwords (Cfg.query config)
 
+data SE.SearchEngine engine => Search engine = Search
+    { sEngine :: engine
+    , sConfig :: SE.Config engine
+    , sProxy  :: Maybe Proxy
+    , sQuery  :: String
+    , sStart  :: Int
+    }
+
 -- | Perform a search, print results, dump as needed
-doSearch :: Bing.SearchConfig -> Maybe Proxy -> Bool -> String -> Int -> IO Bing.Results
-doSearch searchCfg mproxy dump query start = do
-    hPutStrLn stderr $ "Search starting from " ++ show start
-    rawRes <- connect searchCfg mproxy start query
-    res    <- readResults query rawRes
+doSearch :: SE.SearchEngine engine
+         => Bool -- ^ dump
+         -> Search engine
+         -> IO Bing.Results
+doSearch dump search@(Search {sQuery, sStart}) = do
+    hPutStrLn stderr $ "Search starting from " ++ show sStart
+    rawRes <- connect search
+    res    <- readResults sQuery rawRes
     printResults res
     when dump $ do
-         rfile <- dumpSearchResults query (show start) rawRes
+         rfile <- dumpSearchResults sQuery (show sStart) rawRes
          T.hPutStrLn stderr $ Msg.dumped rfile
     return res
 
-connect :: SearchConfig -> Maybe Proxy -> Int -> String -> IO BL.ByteString
-connect searchCfg mproxy start theQuery = flip catch reportException $ do
+connect :: SE.SearchEngine engine
+        => Search engine
+        -> IO BL.ByteString
+connect (Search {sConfig, sProxy, sQuery, sStart}) = flip catch reportException $ do
     request_ <- parseUrl . exportURL $ url
     let request = request_
-            { proxy          = mproxy
+            { proxy          = sProxy
             , requestHeaders = requestHeaders request_ ++ headers
             }
     withManager $ \mgr -> responseBody <$> httpLbs request mgr
   where
     reportException e = die (Msg.gotHttpException e)
-    (url, headers) = mkRequest searchCfg start theQuery
+    (url, headers)    = SE.mkRequest sConfig sStart sQuery
 
 -- | Read results, complaining if something goes wrong
 readResults :: FromJSON r
@@ -135,7 +151,8 @@ searchCfgFilePath engine = do
     return $ appdir </> SE.shortName engine <.> "json"
 
 -- TODO generalise
-readSearchConfigFile :: SE.SearchEngine e => e -> IO Bing.SearchConfig
+readSearchConfigFile :: (SE.SearchEngine e, FromJSON (SE.Config e))
+                     => e -> IO (SE.Config e)
 readSearchConfigFile engine = do
     cfile  <- searchCfgFilePath engine
     exists <- doesFileExist cfile
