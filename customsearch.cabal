@@ -2,8 +2,8 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                customsearch
-version:             0.1.0.0
-synopsis:            Search the web using a Google Custom Search Engine
+version:             0.2.0.0
+synopsis:            Search the web using a Google Custom Search Engine or Bing
 -- description:         
 license:             BSD3
 license-file:        LICENSE
