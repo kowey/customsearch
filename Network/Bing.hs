@@ -144,13 +144,16 @@ configInstructions cfile = unlines_
     [ "1. Sign up for the Windows Azure marketplace at"
     , "   <http://datamarket.azure.com/>"
     , ""
-    , "2. Find your Primary Account Key at"
+    , "2. Sign up for the Bing Search API - Web Results Only"
+    , "   product at <https://datamarket.azure.com/dataset/bing/searchweb>"
+    , ""
+    , "3. Find your Primary Account Key at"
     , "   <https://datamarket.azure.com/account>"
     , ""
-    , "3. Copy this text into a text editor and replace the API keys"
+    , "4. Copy this text into a text editor and replace the API keys"
     ,     TL.toStrict . TL.decodeUtf8 $ encodePretty fakeConfig
     , ""
-    , "4. Save the results in " <> T.pack cfile
+    , "5. Save the results in " <> T.pack cfile
     ]
   where
     fakeConfig = BingConfig
