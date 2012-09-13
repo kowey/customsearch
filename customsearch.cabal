@@ -14,19 +14,43 @@ category:            Web
 build-type:          Simple
 cabal-version:       >=1.8
 
-executable customsearch
-  main-is:             customsearch.hs
-  -- other-modules:       
+library
+  exposed-modules:
+      Network.Bing
+      Network.Google.Billing
+      Network.Google.CustomSearch
+      Network.SearchEngine
   build-depends:       base ==4.5.*
                ,       base64-bytestring
                ,       bytestring
                ,       aeson
                ,       aeson-pretty
                ,       case-insensitive
+               ,       filepath
+               ,       ghc-prim
+               ,       http-conduit
+               ,       http-types
+               ,       text
+               ,       url
+               ,       vector
+  ghc-options: -Wall
+
+executable customsearch
+  main-is:             customsearch.hs
+  hs-source-dirs:      customsearch
+  other-modules:
+      Local.Config
+      Local.Message
+      Local.Proxy
+  build-depends:       base ==4.5.*
+               ,       customsearch
+               ,       aeson
+               ,       aeson-pretty
+               ,       bytestring
+               ,       case-insensitive
                ,       cmdargs
                ,       directory
                ,       filepath
-               ,       ghc-prim
                ,       HTTP
                ,       http-conduit
                ,       http-types
