@@ -15,6 +15,8 @@ class SearchEngine a where
 
     maxResultsPerSearch :: a -> Int
     shortName           :: a -> String
+    messages            :: a -> Messages
+
     mkRequest           :: Config a -> Int -> String -> (URL, [Header])
     allowMultiSearch    :: Config a -> Bool -- ^ user explicitly allows us to do multishot searches
 
@@ -24,4 +26,11 @@ class SearchEngine a where
 data Result = Result
     { snippet :: T.Text
     , url     :: T.Text
+    }
+
+data Messages = Messages
+    { configFileNotFound :: FilePath -> T.Text
+    , configParseError   :: FilePath -> T.Text
+    , configInstructions :: FilePath -> T.Text
+    , dareNotMultiSearch :: FilePath -> Int -> T.Text
     }

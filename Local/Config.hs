@@ -16,6 +16,7 @@ import Paths_customsearch
 -- TODO: ability to specify developer and cse key as flags
 data CustomSearch = CustomSearch
     { num        :: Int
+    , engine     :: Engine
     , start      :: Int
     , query      :: [String]
     , dump       :: Bool
@@ -23,12 +24,16 @@ data CustomSearch = CustomSearch
     }
   deriving (Show, Data, Typeable)
 
+data Engine = Google | Bing
+  deriving (Show, Data, Typeable)
+
 customsearch :: FilePath -> CustomSearch
 customsearch p = modes
     [ CustomSearch
-        { num    = 10 &= typ "INT" &= help "Number of results to return"
-        , start  = 1  &= typ "INT" &= help "Starting from which result"
-        , query  = []  &= args
+        { num    = 10   &= typ "INT"    &= help "Number of results to return"
+        , engine = Bing &= typ "ENGINE" &= help "Search engine to use [google|bing]"
+        , start  = 1    &= typ "INT"    &= help "Starting from which result"
+        , query  = []   &= args
         , dump     = False            &= help "Save machine readable results"
         , fromDump = "" &= typ "FILE"
                         &= help "[DEBUG ONLY] Don't talk to Google. Read and print machine readable results from file"

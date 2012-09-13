@@ -1,5 +1,5 @@
-{-# LANGUAGE DeriveDataTypeable, DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric, TypeFamilies, FlexibleInstances #-}
 
 -- | Google Custom Search Engine
 module Network.Google.CustomSearch where
@@ -16,62 +16,94 @@ import qualified Data.Text.Read as T
 
 import Data.Aeson
 import Data.Aeson.Encode.Pretty
+import Network.HTTP.Types
 import Network.URL
 import qualified Data.Vector as V
 import qualified Network.SearchEngine as SE
 import qualified Network.Google.Billing as GB
 
-data GoogleCSE = GoogleCSE
+data Google = Google
 
-instance SE.SearchEngine GoogleCSE where
+instance SE.SearchEngine Google where
+    data Config  Google = Config  GoogleConfig
+    data Results Google = Results GoogleResults
+
     maxResultsPerSearch _ = GB.maxResultsPerCustomSearch
     shortName _           = "google-cse"
+    mkRequest (Config c)        = mkRequest c
+    allowMultiSearch (Config c) = allowBilling c
+
+    items (Results r) = V.map fromGoogleResult (items r)
+
+    messages _ = SE.Messages
+        { SE.configFileNotFound = configFileNotFound
+        , SE.configParseError   = configParseError
+        , SE.configInstructions = configInstructions
+        , SE.dareNotMultiSearch = dareNotMultiSearch
+        }
+
+instance FromJSON (SE.Config Google) where
+   parseJSON j = Config <$> parseJSON j
+
+instance FromJSON (SE.Results Google) where
+   parseJSON j = Results <$> parseJSON j
+
+-- ---------------------------------------------------------------------
+-- configuration
+-- ---------------------------------------------------------------------
 
 -- | Application-specific configuration for custom search
-data SearchConfig = SearchConfig
+data GoogleConfig = GoogleConfig
     { searchEngine   :: String -- ^ Custom search engine, see http://www.google.com/cse
     , devKey         :: String -- ^ Your API developer key, see http://code.google.com/apis/console
     , allowBilling   :: Bool
     }
   deriving (Generic)
 
-instance FromJSON SearchConfig
-instance ToJSON   SearchConfig
-
--- | Construct a URL for a custom search
-mkUrl :: SearchConfig
-      -> Int     -- ^ starting result
-      -> String  -- ^ search term
-      -> URL
-mkUrl config start search = URL
-    { url_type   = Absolute google
-    , url_path   = "customsearch/v1"
-    , url_params = [ ("q", search)
-                   , ("alt", "json")
-                   , ("cx",  searchEngine config)
-                   , ("key", devKey config)
-                   , ("start", show start)
-                   ]
-    }
-  where
-    google = Host (HTTP True) "www.googleapis.com" Nothing
+instance FromJSON GoogleConfig
+instance ToJSON   GoogleConfig
 
 -- ---------------------------------------------------------------------
---
+-- requests
+-- ---------------------------------------------------------------------
+
+-- | Construct a URL for a custom search
+mkRequest :: GoogleConfig
+          -> Int     -- ^ starting result
+          -> String  -- ^ search term
+          -> (URL, [Header])
+mkRequest config start search =
+    (url, headers)
+  where
+    url = URL
+        { url_type   = Absolute google
+        , url_path   = "customsearch/v1"
+        , url_params = [ ("q", search)
+                       , ("alt", "json")
+                       , ("cx",  searchEngine config)
+                       , ("key", devKey config)
+                       , ("start", show start)
+                       ]
+        }
+    google = Host (HTTP True) "www.googleapis.com" Nothing
+    headers = []
+
+-- ---------------------------------------------------------------------
+-- results
 -- ---------------------------------------------------------------------
 
 -- | Search results and any relevant metadata returned from them
 --
 --   (Note, currently very sparse and limited to the bits I'm using)
-data GResults = GResults
-    { items        :: V.Vector GResult
+data GoogleResults = GoogleResults
+    { items        :: V.Vector GoogleResult
     , totalResults :: Int
     }
   deriving Generic
 
-instance FromJSON GResults where
+instance FromJSON GoogleResults where
     parseJSON (Object v) =
-        GResults <$> (v .: "items")
+        GoogleResults <$> (v .: "items")
                  <*> (parseSI =<< (v .: "searchInformation"))
       where
         parseSI (Object sv) = do
@@ -82,16 +114,13 @@ instance FromJSON GResults where
         parseSI _ = mzero
     parseJSON _ = mzero
 
-instance SE.Results GResults where
-    items = V.map fromGResult . items
-
 -- | A single hit in the search
 --
 --   (Note, currently very sparse and limited to the bits I'm using)
-newtype GResult = GResult { fromGResult :: SE.Result }
+newtype GoogleResult = GoogleResult { fromGoogleResult :: SE.Result }
 
-instance FromJSON GResult where
-    parseJSON (Object v) = GResult <$>
+instance FromJSON GoogleResult where
+    parseJSON (Object v) = GoogleResult <$>
         (SE.Result <$> v .: "snippet"
                    <*> v .: "link"
         )
@@ -101,15 +130,15 @@ instance FromJSON GResult where
 -- * Messages
 -- ---------------------------------------------------------------------
 
-searchConfigFileNotFound :: FilePath -> T.Text
-searchConfigFileNotFound cfile = unlines_
+configFileNotFound :: FilePath -> T.Text
+configFileNotFound cfile = unlines_
     [ "Please create the configuration file " <> T.pack cfile <> ":"
     , ""
     , configInstructions cfile
     ]
 
-searchConfigParseError :: FilePath -> T.Text
-searchConfigParseError cfile = unlines_
+configParseError :: FilePath -> T.Text
+configParseError cfile = unlines_
     [ "Sorry! I didn't understand the configuration file " <> T.pack cfile
     , "In case it helps, here are the instructions for creating that file again:"
     , ""
@@ -130,14 +159,14 @@ configInstructions cfile = unlines_
     , "4. Save the results in " <> T.pack cfile
     ]
   where
-    fakeConfig = SearchConfig
+    fakeConfig = GoogleConfig
         { searchEngine = "012345678901234567890:thisisafake"
         , devKey       = "saonetuhash38hsreaochusarchsSR3bzllgggx"
         , allowBilling = False
         }
 
-dareNotExceedQuota :: FilePath -> Int -> Text
-dareNotExceedQuota cfile num = unlines_
+dareNotMultiSearch :: FilePath -> Int -> Text
+dareNotMultiSearch cfile num = unlines_
     [ "You've asked for " <> tshow num <> " results, but at the time of"
     , "this writing, Google only allow " <> tshow rps <> " results per search."
     , ""

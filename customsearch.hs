@@ -28,26 +28,31 @@ import Network.URL
 import System.Console.CmdArgs
 import qualified Data.Vector as V
 
--- import Network.Google.CustomSearch
-import Network.Bing
-import Network.SearchEngine   ( SearchEngine )
+import Network.Google.CustomSearch ( Google(..) )
+import Network.Bing ( Bing(..) )
+import Network.SearchEngine
 import qualified Network.SearchEngine   as SE
 import qualified Local.Config  as Cfg
 import qualified Local.Message as Msg
-import qualified Network.Bing  as Msg -- TODO generalise
 import Local.Proxy
 
 main :: IO ()
 main = do
     config <- cmdArgs =<< (Cfg.customsearch <$> getProgName)
-    if null (Cfg.fromDump config)
-       then doSearches Bing config
-       else doFromDump Bing config
+    case Cfg.engine config of
+        Cfg.Google -> main' config Google
+        Cfg.Bing   -> main' config Bing
+  where
+    main' config engine =
+       if null (Cfg.fromDump config)
+          then doSearches engine config
+          else doFromDump engine config
 
 -- for convenience in writing type signatures
 class (SearchEngine e, FromJSON (SE.Config e), FromJSON (SE.Results e)) => SearchEngineJson e where
 
 instance SearchEngineJson Bing
+instance SearchEngineJson Google
 
 doSearches :: SearchEngineJson engine
            => engine
@@ -69,7 +74,7 @@ doSearches engine config = do
                }
            else do
                { cfile <- searchCfgFilePath engine
-               ; die (Msg.dareNotExceedQuota cfile (Cfg.num config))
+               ; die $ dareNotMultiSearch (SE.messages engine) cfile (Cfg.num config)
                }
   where
     query = unwords (Cfg.query config)
@@ -169,11 +174,11 @@ readSearchConfigFile engine = do
     exists <- doesFileExist cfile
     if exists
        then do
-           let oops = Msg.searchConfigParseError cfile
+           let oops = configParseError (messages engine) cfile
            fromMaybeM (die oops) $ decode <$> BL.readFile cfile
        else do
            createDirectoryIfMissing False (takeDirectory cfile)
-           die (Msg.searchConfigFileNotFound cfile)
+           die $ configFileNotFound (messages engine) cfile
 
 displayResult :: SE.Result -> T.Text
 displayResult gr =

@@ -37,6 +37,13 @@ instance SE.SearchEngine Bing where
 
     items (Results r) = V.map fromBingResult (results r)
 
+    messages _ = SE.Messages
+        { SE.configFileNotFound = configFileNotFound
+        , SE.configParseError   = configParseError
+        , SE.configInstructions = configInstructions
+        , SE.dareNotMultiSearch = dareNotMultiSearch
+        }
+
 instance FromJSON (SE.Config Bing) where
    parseJSON j = Config <$> parseJSON j
 
@@ -116,15 +123,15 @@ instance FromJSON BingResult where
 --
 -- ---------------------------------------------------------------------
 
-searchConfigFileNotFound :: FilePath -> T.Text
-searchConfigFileNotFound cfile = unlines_
+configFileNotFound :: FilePath -> T.Text
+configFileNotFound cfile = unlines_
     [ "Please create the configuration file " <> T.pack cfile <> ":"
     , ""
     , configInstructions cfile
     ]
 
-searchConfigParseError :: FilePath -> T.Text
-searchConfigParseError cfile = unlines_
+configParseError :: FilePath -> T.Text
+configParseError cfile = unlines_
     [ "Sorry! I didn't understand the configuration file " <> T.pack cfile
     , "In case it helps, here are the instructions for creating that file again:"
     , ""
@@ -150,8 +157,8 @@ configInstructions cfile = unlines_
         , allowBilling = False
         }
 
-dareNotExceedQuota :: FilePath -> Int -> Text
-dareNotExceedQuota cfile num = unlines_
+dareNotMultiSearch :: FilePath -> Int -> Text
+dareNotMultiSearch cfile num = unlines_
     [ "You've asked for " <> tshow num <> " results, but at the time of"
     , "this writing, Microsoft only allow " <> tshow rps <> " results per search."
     , ""
