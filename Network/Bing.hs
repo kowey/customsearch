@@ -36,6 +36,7 @@ instance SE.SearchEngine Bing where
     allowMultiSearch (Config c) = allowBilling c
 
     items (Results r) = V.map fromBingResult (results r)
+    totalResults _    = Nothing
 
     messages _ = SE.Messages
         { SE.configFileNotFound = configFileNotFound

@@ -34,6 +34,7 @@ instance SE.SearchEngine Google where
     allowMultiSearch (Config c) = allowBilling c
 
     items (Results r) = V.map fromGoogleResult (items r)
+    totalResults (Results r) = Just (totalResults r)
 
     messages _ = SE.Messages
         { SE.configFileNotFound = configFileNotFound

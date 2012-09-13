@@ -65,8 +65,9 @@ doSearches engine config = do
     -- first batch of results
     let mkSearch = Search engine searchCfg mproxy query
     res <- doSearch engine dump (mkSearch start)
+    let thereIsMore = maybe True (> step) (totalResults res)
     -- handle more results
-    when (num > step) $ -- TODO && totalResults res > step) $
+    when (num > step && thereIsMore) $
         if SE.allowMultiSearch searchCfg
            then do
                { let starts = drop 1 [ start, start + step .. start + num ]

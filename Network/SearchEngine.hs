@@ -23,6 +23,12 @@ class SearchEngine a where
     -- | results from a search
     items               :: Results a -> V.Vector Result
 
+    -- | total results (if the search engine tells us)
+    --   This includes results that have not been returned in this query,
+    --   so it's not the same as (@length . items@)
+    totalResults        :: Results a -> Maybe Int
+
+
 data Result = Result
     { snippet :: T.Text
     , url     :: T.Text
