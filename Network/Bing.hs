@@ -27,27 +27,42 @@ import qualified Data.Text.Lazy.Encoding as TL
 data Bing = Bing
 
 instance SE.SearchEngine Bing where
-    data Config Bing = Config SearchConfig
+    data Config  Bing = Config  BingConfig
+    data Results Bing = Results BingResults
+
     maxResultsPerSearch _ = 50
     shortName           _ = "bing"
     mkRequest (Config c)        = mkRequest c
     allowMultiSearch (Config c) = allowBilling c
 
+    items (Results r) = V.map fromBingResult (results r)
+
+instance FromJSON (SE.Config Bing) where
+   parseJSON j = Config <$> parseJSON j
+
+instance FromJSON (SE.Results Bing) where
+   parseJSON j = Results <$> parseJSON j
+
+-- ---------------------------------------------------------------------
+-- configuration
+-- ---------------------------------------------------------------------
+
 -- | Application-specific configuration for this search engine
-data SearchConfig = SearchConfig
+data BingConfig = BingConfig
     { apiKey       :: B.ByteString
     , allowBilling :: Bool
     }
   deriving (Generic)
 
-instance FromJSON (SE.Config Bing) where
-   parseJSON j = Config <$> parseJSON j
+instance FromJSON BingConfig
+instance ToJSON   BingConfig
 
-instance FromJSON SearchConfig
-instance ToJSON   SearchConfig
+-- ---------------------------------------------------------------------
+-- requests
+-- ---------------------------------------------------------------------
 
 -- | Construct a URL and HTTP headers a custom search
-mkRequest :: SearchConfig
+mkRequest :: BingConfig
           -> Int     -- ^ starting result
           -> String  -- ^ search term
           -> (URL, [Header])
@@ -69,24 +84,22 @@ mkRequest config start search =
         ]
 
 -- ---------------------------------------------------------------------
---
+-- results
 -- ---------------------------------------------------------------------
 
 -- | Search results and any relevant metadata returned from them
 --
 --   (Note, currently very sparse and limited to the bits I'm using)
-data Results = Results
+data BingResults = BingResults
     { results :: V.Vector BingResult
     }
   deriving Generic
 
-instance FromJSON Results where
+instance FromJSON BingResults where
     parseJSON (Object v) =
-        Results <$> (v .: "d" >>= (.: "results"))
+        BingResults <$> (v .: "d" >>= (.: "results"))
     parseJSON _ = mzero
 
-instance SE.Results Results where
-    items = V.map fromBingResult . results
 
 -- | A single hit in the search
 newtype BingResult = BingResult { fromBingResult :: SE.Result }
@@ -132,7 +145,7 @@ configInstructions cfile = unlines_
     , "4. Save the results in " <> T.pack cfile
     ]
   where
-    fakeConfig = SearchConfig
+    fakeConfig = BingConfig
         { apiKey       = "ABCDEFG0123456890ABCDEFGHIJKLMOPQRSTUV="
         , allowBilling = False
         }
