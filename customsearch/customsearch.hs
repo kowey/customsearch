@@ -18,8 +18,10 @@ import System.Environment
 import System.Exit
 import System.FilePath
 import System.IO
+import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Text     as T
+import qualified Data.Text.Encoding as T
 import qualified Data.Text.IO  as T
 
 import Data.Aeson
@@ -150,7 +152,7 @@ readResults _ query searchRes =
 printResults :: SearchEngineJson engine
              => SE.Results engine
              -> IO ()
-printResults = V.mapM_ (T.putStrLn . displayResult) . SE.items
+printResults = V.mapM_ (B.putStrLn . T.encodeUtf8. displayResult) . SE.items
 
 -- | Returns file name for dumped results
 dumpSearchResults :: String -> String -> BL.ByteString -> IO FilePath
