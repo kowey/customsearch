@@ -8,6 +8,7 @@ module Main where
 import Control.Applicative
 import Control.Exception
 import Control.Monad
+import Control.Monad.IO.Class
 import Data.Char
 import Data.List
 import Data.Maybe
@@ -42,18 +43,12 @@ import Local.Proxy
 main :: IO ()
 main = do
     config_ <- cmdArgs =<< (Cfg.customsearch <$> getProgName)
-    config  <- if null (Cfg.query config_)
-                   then do
-                       mq <- runInputT defaultSettings $ do
-                           { hasT <- haveTerminalUI
-                           ; if hasT
-                                then getInputLine "What should I search for? "
-                                else return Nothing
-                           }
-                       case mq of
-                           Nothing -> die "I don't know what you want me to search for."
-                           Just q  -> return $ config_ { Cfg.query = [q] }
-                   else return config_
+    config  <- runInputT defaultSettings $ do
+                     { hasT <- haveTerminalUI
+                     ; if hasT
+                          then augmentConfig config_
+                          else return config_
+                     }
     let ofile = Cfg.output config
     unless (null ofile) $ do
         hasO <- doesFileExist ofile
@@ -66,6 +61,31 @@ main = do
        if null (Cfg.fromDump config)
           then doSearches engine config
           else doFromDump engine config
+
+augmentConfig :: Cfg.CustomSearch -> InputT IO Cfg.CustomSearch
+augmentConfig config = do
+    query <- ifMissing null Cfg.query
+                 (singleton <$> (repeatWhileEmpty $ getInputLine "What should I search for? "))
+    outputToTerminal <- liftIO (hIsTerminalDevice stdout)
+    ofile <- if outputToTerminal
+                then ifMissing null Cfg.output $ repeatWhileEmpty $
+                         getInputLine "What file should I save the results to? "
+                else return (Cfg.output config)
+    return $ config
+        { Cfg.query  = query
+        , Cfg.output = ofile
+        }
+  where
+    singleton = (: [])
+    ifMissing :: (a -> Bool) -> (Cfg.CustomSearch -> a) -> InputT IO a -> InputT IO a
+    ifMissing missing f q =
+        if missing (f config) then q else return (f config)
+    repeatWhileEmpty job = do
+        mstr <- job
+        case mstr of
+            Nothing -> liftIO $ die "OK, giving up"
+            Just "" -> repeatWhileEmpty job
+            Just x  -> return x
 
 -- for convenience in writing type signatures
 class (SearchEngine e, FromJSON (SE.Config e), FromJSON (SE.Results e)) => SearchEngineJson e where
@@ -228,3 +248,8 @@ die msg = T.hPutStrLn stderr msg >> exitWith (ExitFailure 1)
 
 fromMaybeM :: Monad m => m a -> m (Maybe a) -> m a
 fromMaybeM z job = maybe z return =<< job
+
+maybeRead :: Read a => String -> Maybe a
+maybeRead s = case reads s of
+    [(x, rest)] | all isSpace rest -> Just x
+    _         -> Nothing
