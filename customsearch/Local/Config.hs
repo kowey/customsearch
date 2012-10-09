@@ -21,6 +21,7 @@ data CustomSearch = CustomSearch
     , query      :: [String]
     , dump       :: Bool
     , fromDump   :: FilePath
+    , output     :: FilePath
     }
   deriving (Show, Data, Typeable)
 
@@ -33,6 +34,7 @@ customsearch p = modes
         { num    = 10   &= typ "INT"    &= help "Number of results to return"
         , engine = Bing &= typ "ENGINE" &= help "Search engine to use [google|bing]"
         , start  = 1    &= typ "INT"    &= help "Starting from which result"
+        , output = ""   &= typ "FILE"   &= help "Output file"
         , query  = []   &= args
         , dump     = False            &= help "Save machine readable results"
         , fromDump = "" &= typ "FILE"

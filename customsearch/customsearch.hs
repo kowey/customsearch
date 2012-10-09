@@ -66,14 +66,14 @@ doSearches engine config = do
     mproxy <- fetchHttpConduitProxy
     -- first batch of results
     let mkSearch = Search engine searchCfg mproxy query
-    res <- doSearch engine dump (mkSearch start)
+    res <- doSearch config engine dump (mkSearch start)
     let thereIsMore = maybe True (> step) (totalResults res)
     -- handle more results
     when (num > step && thereIsMore) $
         if SE.allowMultiSearch searchCfg
            then do
                { let starts = drop 1 [ start, start + step .. start + num ]
-               ; mapM_ (doSearch engine dump . mkSearch) starts
+               ; mapM_ (doSearch config engine dump . mkSearch) starts
                }
            else do
                { cfile <- searchCfgFilePath engine
@@ -92,7 +92,7 @@ doFromDump :: SearchEngineJson engine
 doFromDump engine config = do
     rawRes <- BL.readFile (Cfg.fromDump config)
     res    <- readResults engine query rawRes
-    printResults res
+    printResults config res
     -- hPutStrLn stderr $ show (totalResults res) ++ " total results"
  where
     query = unwords (Cfg.query config)
@@ -107,15 +107,16 @@ data SearchEngine engine => Search engine = Search
 
 -- | Perform a search, print results, dump as needed
 doSearch :: SearchEngineJson engine
-         => engine
+         => Cfg.CustomSearch
+         -> engine
          -> Bool -- ^ dump
          -> Search engine
          -> IO (SE.Results engine)
-doSearch engine dump search@(Search {sQuery, sStart}) = do
+doSearch config engine dump search@(Search {sQuery, sStart}) = do
     hPutStrLn stderr $ "Search starting from " ++ show sStart
     rawRes <- connect search
     res    <- readResults engine sQuery rawRes
-    printResults res
+    printResults config res
     when dump $ do
          rfile <- dumpSearchResults sQuery (show sStart) rawRes
          T.hPutStrLn stderr $ Msg.dumped rfile
@@ -150,9 +151,15 @@ readResults _ query searchRes =
         Just j -> return j
 
 printResults :: SearchEngineJson engine
-             => SE.Results engine
+             => Cfg.CustomSearch
+             -> SE.Results engine
              -> IO ()
-printResults = V.mapM_ (B.putStrLn . T.encodeUtf8. displayResult) . SE.items
+printResults config =
+    V.mapM_ (save . T.encodeUtf8. displayResult) . SE.items
+  where
+    save = if null (Cfg.output config)
+              then B.putStrLn
+              else B.writeFile (Cfg.output config)
 
 -- | Returns file name for dumped results
 dumpSearchResults :: String -> String -> BL.ByteString -> IO FilePath
