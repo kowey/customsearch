@@ -168,10 +168,10 @@ printResults :: SearchEngineJson engine
              -> SE.Results engine
              -> IO ()
 printResults config =
-    V.mapM_ (save . T.encodeUtf8. displayResult) . SE.items
+    save . T.encodeUtf8 . T.unlines . V.toList . V.map displayResult . SE.items
   where
     save = if null (Cfg.output config)
-              then B.putStrLn
+              then B.putStr
               else B.writeFile (Cfg.output config)
 
 -- | Returns file name for dumped results
