@@ -51,6 +51,7 @@ executable customsearch
                ,       cmdargs
                ,       directory
                ,       filepath
+               ,       haskeline
                ,       HTTP
                ,       http-conduit
                ,       http-types

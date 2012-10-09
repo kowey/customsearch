@@ -18,16 +18,17 @@ import System.Environment
 import System.Exit
 import System.FilePath
 import System.IO
-import qualified Data.ByteString as B
+import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Text     as T
 import qualified Data.Text.Encoding as T
-import qualified Data.Text.IO  as T
+import qualified Data.Text.IO as T
 
 import Data.Aeson
 import Network.HTTP.Conduit
 import Network.URL
 import System.Console.CmdArgs
+import System.Console.Haskeline hiding ( catch )
 import qualified Data.Vector as V
 
 import Network.Google.CustomSearch ( Google(..) )
@@ -40,7 +41,19 @@ import Local.Proxy
 
 main :: IO ()
 main = do
-    config <- cmdArgs =<< (Cfg.customsearch <$> getProgName)
+    config_ <- cmdArgs =<< (Cfg.customsearch <$> getProgName)
+    config  <- if null (Cfg.query config_)
+                   then do
+                       mq <- runInputT defaultSettings $ do
+                           { hasT <- haveTerminalUI
+                           ; if hasT
+                                then getInputLine "What should I search for? "
+                                else return Nothing
+                           }
+                       case mq of
+                           Nothing -> die "I don't know what you want me to search for."
+                           Just q  -> return $ config_ { Cfg.query = [q] }
+                   else return config_
     case Cfg.engine config of
         Cfg.Google -> main' config Google
         Cfg.Bing   -> main' config Bing
