@@ -54,6 +54,10 @@ main = do
                            Nothing -> die "I don't know what you want me to search for."
                            Just q  -> return $ config_ { Cfg.query = [q] }
                    else return config_
+    let ofile = Cfg.output config
+    unless (null ofile) $ do
+        hasO <- doesFileExist ofile
+        when hasO . die $ "The file " <> T.pack ofile <> " already exists.  I dare not overwrite it."
     case Cfg.engine config of
         Cfg.Google -> main' config Google
         Cfg.Bing   -> main' config Bing
@@ -167,12 +171,18 @@ printResults :: SearchEngineJson engine
              => Cfg.CustomSearch
              -> SE.Results engine
              -> IO ()
-printResults config =
-    save . T.encodeUtf8 . T.unlines . V.toList . V.map displayResult . SE.items
+printResults config res = do
+    unless (null ofile) $ do
+        e <- doesFileExist ofile
+        unless e $ B.writeFile ofile ""
+    save . T.encodeUtf8 . T.unlines
+         . V.toList . V.map displayResult
+         . SE.items $ res
   where
-    save = if null (Cfg.output config)
+    ofile = Cfg.output config
+    save = if null ofile
               then B.putStr
-              else B.writeFile (Cfg.output config)
+              else B.appendFile (Cfg.output config)
 
 -- | Returns file name for dumped results
 dumpSearchResults :: String -> String -> BL.ByteString -> IO FilePath
