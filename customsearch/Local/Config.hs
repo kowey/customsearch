@@ -15,7 +15,7 @@ import Paths_customsearch
 -- TODO: ability to specify search config files
 -- TODO: ability to specify developer and cse key as flags
 data CustomSearch = CustomSearch
-    { num        :: Int
+    { num        :: Maybe Int
     , engine     :: Engine
     , start      :: Int
     , query      :: [String]
@@ -31,7 +31,7 @@ data Engine = Google | Bing
 customsearch :: FilePath -> CustomSearch
 customsearch p = modes
     [ CustomSearch
-        { num    = 10   &= typ "INT"    &= help "Number of results to return"
+        { num    = Nothing &= typ "INT"    &= help "Number of results to return"
         , engine = Bing &= typ "ENGINE" &= help "Search engine to use [google|bing]"
         , start  = 1    &= typ "INT"    &= help "Starting from which result"
         , output = ""   &= typ "FILE"   &= help "Output file"

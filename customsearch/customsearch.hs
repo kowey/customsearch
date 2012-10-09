@@ -42,50 +42,67 @@ import Local.Proxy
 
 main :: IO ()
 main = do
-    config_ <- cmdArgs =<< (Cfg.customsearch <$> getProgName)
-    config  <- runInputT defaultSettings $ do
-                     { hasT <- haveTerminalUI
-                     ; if hasT
-                          then augmentConfig config_
-                          else return config_
-                     }
-    let ofile = Cfg.output config
-    unless (null ofile) $ do
-        hasO <- doesFileExist ofile
-        when hasO . die $ "The file " <> T.pack ofile <> " already exists.  I dare not overwrite it."
+    config <- cmdArgs =<< (Cfg.customsearch <$> getProgName)
     case Cfg.engine config of
         Cfg.Google -> main' config Google
         Cfg.Bing   -> main' config Bing
   where
-    main' config engine =
-       if null (Cfg.fromDump config)
-          then doSearches engine config
-          else doFromDump engine config
+    main' config_ engine = do
+        let ofile = Cfg.output config_
+        unless (null ofile) $ do
+            hasO <- doesFileExist ofile
+            when hasO . die $ "The file " <> T.pack ofile <> " already exists.  I dare not overwrite it."
+        if null (Cfg.fromDump config_)
+            then do
+                config  <- runInputT defaultSettings $ do
+                    { hasT <- haveTerminalUI
+                    ; if hasT
+                         then augmentConfig engine config_
+                         else return config_
+                    }
+                doSearches engine config
+            else doFromDump engine config_
 
-augmentConfig :: Cfg.CustomSearch -> InputT IO Cfg.CustomSearch
-augmentConfig config = do
+augmentConfig :: SearchEngineJson engine
+              => engine
+              -> Cfg.CustomSearch
+              -> InputT IO Cfg.CustomSearch
+augmentConfig engine config = do
     query <- ifMissing null Cfg.query
-                 (singleton <$> (repeatWhileEmpty $ getInputLine "What should I search for? "))
+                 (singleton <$> (repeatWhile null $ getInputLine "What should I search for? "))
     outputToTerminal <- liftIO (hIsTerminalDevice stdout)
     ofile <- if outputToTerminal
-                then ifMissing null Cfg.output $ repeatWhileEmpty $
+                then ifMissing null Cfg.output $ repeatWhile null $
                          getInputLine "What file should I save the results to? "
                 else return (Cfg.output config)
+    num <- ifMissing isNothing Cfg.num $
+               (Just <$> loopNum step "How many results should I return? ")
     return $ config
         { Cfg.query  = query
         , Cfg.output = ofile
+        , Cfg.num    = num
         }
   where
     singleton = (: [])
     ifMissing :: (a -> Bool) -> (Cfg.CustomSearch -> a) -> InputT IO a -> InputT IO a
     ifMissing missing f q =
         if missing (f config) then q else return (f config)
-    repeatWhileEmpty job = do
+    withSurrender job = do
         mstr <- job
         case mstr of
             Nothing -> liftIO $ die "OK, giving up"
-            Just "" -> repeatWhileEmpty job
             Just x  -> return x
+    repeatWhile bad job = do
+        str <- withSurrender job
+        if bad str then repeatWhile bad job else return str
+    loopNum dnum q = do
+        numStr <- withSurrender $ getInputLineWithInitial q (show dnum, "")
+        case maybeRead numStr of
+            Nothing -> do
+                outputStrLn "Sorry, I didn't understand your number."
+                loopNum dnum q
+            Just num -> return num
+    step = SE.maxResultsPerSearch engine
 
 -- for convenience in writing type signatures
 class (SearchEngine e, FromJSON (SE.Config e), FromJSON (SE.Results e)) => SearchEngineJson e where
@@ -106,19 +123,20 @@ doSearches engine config = do
     res <- doSearch config engine dump (mkSearch start)
     let thereIsMore = maybe True (> step) (totalResults res)
     -- handle more results
-    when (num > step && thereIsMore) $
-        if SE.allowMultiSearch searchCfg
-           then do
-               { let starts = drop 1 [ start, start + step .. start + num ]
-               ; mapM_ (doSearch config engine dump . mkSearch) starts
-               }
-           else do
-               { cfile <- searchCfgFilePath engine
-               ; die $ dareNotMultiSearch (SE.messages engine) cfile (Cfg.num config)
-               }
+    case Cfg.num config of
+        Nothing  -> return ()
+        Just num -> when (num > step && thereIsMore) $
+            if SE.allowMultiSearch searchCfg
+               then do
+                   { let starts = drop 1 [ start, start + step .. start + num ]
+                   ; mapM_ (doSearch config engine dump . mkSearch) starts
+                   }
+               else do
+                   { cfile <- searchCfgFilePath engine
+                   ; die $ dareNotMultiSearch (SE.messages engine) cfile num
+                   }
   where
     query = unwords (Cfg.query config)
-    num   = Cfg.num config
     start = Cfg.start config
     dump  = Cfg.dump config
     step = SE.maxResultsPerSearch engine
